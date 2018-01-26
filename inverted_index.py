@@ -3,7 +3,7 @@ import numpy as np
 class InvertedIndex(object):
     def __init__(self, items=0, users=0):
         self.num_items = items
-        self.item_norms = np.zeros(items)
+        self.item_norms = [0 for _ in range(items)]
         self.item_users_index = {i:set() for i in range(items)}
         self.user_items_index = {i:set() for i in range(users)}
 
@@ -17,15 +17,18 @@ class InvertedIndex(object):
         for v in self.user_items_index.values():
             if item in v:
                 v.remove(item)
+        self.num_items -= 1
+        del(self.item_norms[item])
 
     def add_user(self, user):
         self.user_items_index[user] = set()
 
     def delete_user(self, user):
         del(self.user_items_index[user])
-        for v in self.item_users_index.values():
-            if user in v:
+        for item, users in self.item_users_index.items():
+            if user in users:
                 v.remove(user)
+                self.item_norms[item] -= 1
 
     def add_purchase(self, item, user):
         if user not in self.item_users_index[item]:
