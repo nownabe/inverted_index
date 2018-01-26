@@ -71,8 +71,8 @@ for i in range(table.shape[0]):
 
 
 seed(0)
-num_items = 1000
-num_users = 5000
+num_items = 5000
+num_users = 10000
 threshold = 0.99
 big_table = (rand(num_items, num_users) >= threshold).astype(int)
 
