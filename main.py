@@ -1,3 +1,5 @@
+from collections import Counter
+
 import numpy as np
 from numpy.random import seed, rand
 
@@ -36,12 +38,13 @@ class InvertedIndex(object):
 
     def calc(self, item):
         users = self.item_users_index[item]
-        counter = np.zeros(self.num_items)
+        counter = Counter()
         for user in users:
-            for i in self.user_items_index[user]:
-                counter[i] += 1
+            counter.update(self.user_items_index[user])
 
-        scores = [counter[i] / (self.item_norms[item] + self.item_norms[i] - counter[i]) for i in range(self.num_items)]
+        counted = [counter[i] for i in range(self.num_items)]
+
+        scores = [counted[i] / (self.item_norms[item] + self.item_norms[i] - counted[i]) for i in range(self.num_items)]
         return scores
 
 
