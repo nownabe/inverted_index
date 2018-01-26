@@ -3,6 +3,7 @@ from collections import Counter
 import numpy as np
 from numpy.random import seed, rand
 
+from tqdm import tqdm
 from benchmarker import Benchmarker
 
 class Naive(object):
@@ -48,14 +49,14 @@ class InvertedIndex(object):
         return scores
 
 
-threshold = 0.3
 
 
 seed(0)
-num_users = 5
-num_items = 10
+num_items = 5
+num_users = 10
+threshold = 0.8
 
-table = (rand(num_users, num_items) >= threshold).astype(int)
+table = (rand(num_items, num_users) >= threshold).astype(int)
 print("table:")
 print(table)
 
@@ -70,9 +71,10 @@ for i in range(table.shape[0]):
 
 
 seed(0)
-num_users = 500
 num_items = 1000
-big_table = (rand(num_users, num_items) >= threshold).astype(int)
+num_users = 5000
+threshold = 0.99
+big_table = (rand(num_items, num_users) >= threshold).astype(int)
 
 naive = Naive(big_table)
 iisim = InvertedIndex(big_table)
@@ -80,10 +82,10 @@ iisim = InvertedIndex(big_table)
 with Benchmarker(1) as bench:
     @bench("Naive")
     def _(bm):
-        for i in range(big_table.shape[0]):
+        for i in tqdm(range(big_table.shape[0])):
             naive.calc(i)
 
     @bench("Inverted Index")
     def _(bm):
-        for i in range(big_table.shape[0]):
+        for i in tqdm(range(big_table.shape[0])):
             iisim.calc(i)
